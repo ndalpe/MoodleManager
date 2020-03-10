@@ -80,7 +80,7 @@ class mm(object):
     default_db_password = 'vagrant'
 
     # HTML tpl for the template path
-    tpl_path_container = '<span style="background-color:#000!important; color:#FFF!important;">{}</span>'
+    tpl_path_container = "\n<span style=\"background-color:#000!important; color:#FFF!important;\">{}</span>\n"
 
     # color code \x1b[38;2;R;G;Bm
     CRED = "\x1b[38;2;176;0;32m"
@@ -119,7 +119,7 @@ class mm(object):
             elif args[1] == "ct":
                 self.runCronTask()
             elif args[1] == "tpl":
-                self.template()
+                self.tpl(args)
 
     def print_help(self):
         print("\n")
@@ -132,9 +132,9 @@ class mm(object):
         self.utils.print_msg("                   Default backup/database/database.sql.tar.gz\n", self.CLBLUE)
 
         self.utils.print_msg("tpl [write|reset] [folder]", self.CBLUE)
-        self.utils.print_msg("\tWrite the template path into the mustache tpl")
+        self.utils.print_msg("\tDesc : Write the template path into the mustache tpl")
         self.utils.print_msg("\t[write|reset] write or remove the tpl path in the tpl file", self.CLBLUE)
-        self.utils.print_msg("\t[folder] only templates within the specified folder will be written", self.CLBLUE)
+        self.utils.print_msg("\t[folder] only templates within the specified folder will be written\n", self.CLBLUE)
 
         self.utils.print_msg("export database [archive]", self.CBLUE)
         self.utils.print_msg("\tExport the content of a database into a SQL file and compress it")
@@ -174,16 +174,50 @@ class mm(object):
         self.utils.print_msg("\tforce : Delete plugin if it exists \n", self.CLBLUE)
 
     def tpl(self, args):
+        """ Write the template path into the mustache tpl """
+        """ tpl [write|reset] [folder] """
+
         # check if we are writing or removing the tpl path in the files
         action = self.param[2]
         if (action == "write"):
-            self.writeTpl()
+            self.writeTpl(args)
         else:
-            self.resetTpl()
+            self.resetTpl(args)
 
     def writeTpl(self, args):
         """ Write the path of the template in the specified folder """
 
+        # get the folder to work with
+        if 3 in self.param:
+            param_folder = self.param[3]
+        else:
+            self.utils.print_error("*** [folder] must be specified ***")
+            self.utils.print_msg("ie: mm.py tpl write theme/boost")
+            exit()
+
+        directory = os.path.join(self.wd, param_folder)
+
+        for tplFile in os.listdir(directory):
+            if tplFile.endswith(".mustache"):
+                tplFullPath = os.path.join(directory, tplFile)
+                with open(tplFullPath, 'r') as original: original_tpl = original.read()
+                print(original_tpl)
+                exit()
+                # with open(tplFile, mode='a+', encoding='UTF-8') as file:
+                #     self.utils.print_status("Writing: " + param_folder + file.name)
+                #     with open('filename', 'w') as modified: modified.write("new first line\n" + data)
+                #     # Append text at the end of file
+                #     file.write(self.tpl_path_container.format(param_folder + file.name))
+                #     file.close()
+                continue
+            else:
+                continue
+
+
+    def resetTpl(self, args):
+        """ Reset/remove the template path from the template files """
+        """ using git checkout """
+        print(args)
 
     def create(self, args):
         """
