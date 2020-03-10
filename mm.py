@@ -79,6 +79,9 @@ class mm(object):
     default_db_username = 'vagrant'
     default_db_password = 'vagrant'
 
+    # HTML tpl for the template path
+    tpl_path_container = '<span style="background-color:#000!important; color:#FFF!important;">{}</span>'
+
     # color code \x1b[38;2;R;G;Bm
     CRED = "\x1b[38;2;176;0;32m"
     CBLUE = "\x1b[38;2;36;123;160m"
@@ -115,6 +118,8 @@ class mm(object):
                 self.purgeCache()
             elif args[1] == "ct":
                 self.runCronTask()
+            elif args[1] == "tpl":
+                self.template()
 
     def print_help(self):
         print("\n")
@@ -125,6 +130,11 @@ class mm(object):
         self.utils.print_msg("\timport   : Import SQL switch.", self.CLBLUE)
         self.utils.print_msg("\tarchive  : File to import (without .sql.tar.gz)", self.CLBLUE)
         self.utils.print_msg("                   Default backup/database/database.sql.tar.gz\n", self.CLBLUE)
+
+        self.utils.print_msg("tpl [write|reset] [folder]", self.CBLUE)
+        self.utils.print_msg("\tWrite the template path into the mustache tpl")
+        self.utils.print_msg("\t[write|reset] write or remove the tpl path in the tpl file", self.CLBLUE)
+        self.utils.print_msg("\t[folder] only templates within the specified folder will be written", self.CLBLUE)
 
         self.utils.print_msg("export database [archive]", self.CBLUE)
         self.utils.print_msg("\tExport the content of a database into a SQL file and compress it")
@@ -162,6 +172,18 @@ class mm(object):
         self.utils.print_msg("plugin [force]", self.CBLUE)
         self.utils.print_msg("\tInstall missing plugin from Github and add them to .gitignore")
         self.utils.print_msg("\tforce : Delete plugin if it exists \n", self.CLBLUE)
+
+    def tpl(self, args):
+        # check if we are writing or removing the tpl path in the files
+        action = self.param[2]
+        if (action == "write"):
+            self.writeTpl()
+        else:
+            self.resetTpl()
+
+    def writeTpl(self, args):
+        """ Write the path of the template in the specified folder """
+
 
     def create(self, args):
         """
