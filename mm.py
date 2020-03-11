@@ -80,7 +80,7 @@ class mm(object):
     default_db_password = 'vagrant'
 
     # HTML tpl for the template path
-    tpl_path_container = "\n<span style=\"background-color:#000!important; color:#FFF!important;\">{}</span>\n"
+    tpl_path_container = "<span style=\"background-color:#1177d1!important; color:#FFF!important;align-self:flex-start;padding:10px;z-index:9999;\">{}</span>\n"
 
     # color code \x1b[38;2;R;G;Bm
     CRED = "\x1b[38;2;176;0;32m"
@@ -179,7 +179,7 @@ class mm(object):
 
         # check if we are writing or removing the tpl path in the files
         action = self.param[2]
-        if (action == "write"):
+        if action == "write":
             self.writeTpl(args)
         else:
             self.resetTpl(args)
@@ -198,21 +198,24 @@ class mm(object):
         directory = os.path.join(self.wd, param_folder)
 
         for tplFile in os.listdir(directory):
+
             if tplFile.endswith(".mustache"):
-                tplFullPath = os.path.join(directory, tplFile)
-                with open(tplFullPath, 'r') as original: original_tpl = original.read()
-                print(original_tpl)
-                exit()
-                # with open(tplFile, mode='a+', encoding='UTF-8') as file:
-                #     self.utils.print_status("Writing: " + param_folder + file.name)
-                #     with open('filename', 'w') as modified: modified.write("new first line\n" + data)
-                #     # Append text at the end of file
-                #     file.write(self.tpl_path_container.format(param_folder + file.name))
-                #     file.close()
+                tpl_full_path = os.path.join(directory, tplFile)
+
+                # Get the template content
+                original_tpl = self.utils.get_file_content(tpl_full_path)
+
+                # Get the html template to insert
+                marker = self.tpl_path_container.format(tpl_full_path)
+
+                # Write the template content with the marker
+                modified = self.utils.write_file_content(tpl_full_path, marker + original_tpl)
                 continue
             else:
                 continue
 
+        # Purge all Moodle's cache
+        self.purgeCache()
 
     def resetTpl(self, args):
         """ Reset/remove the template path from the template files """
@@ -624,6 +627,21 @@ class mm(object):
 class utils(mm):
     def __init__(self):
         pass
+
+    def get_file_content(self, param_file):
+        """ Return the content of a file """
+        with open(param_file, 'r') as file:
+            original_tpl = file.read()
+            file.close()
+        return original_tpl
+
+    def write_file_content(self, param_file, content):
+        """ Write content into param_file """
+        with open(param_file, 'w') as file:
+            self.print_status("Writing: " + file.name)
+            file.write(content)
+            file.close()
+        return True
 
     def print_error(self, msg):
         """
