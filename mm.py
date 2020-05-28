@@ -10,6 +10,10 @@ chmod +x ./mm.py
 Create an SSH update/download method
  - p mm.py ssh dev|staging|live ul|dl remote_file local_file
 
+Create vagrant database user
+ - CREATE USER 'vagrant'@'localhost' IDENTIFIED BY 'vagrant';
+ - GRANT ALL PRIVILEGES ON *.* TO 'vagrant'@'localhost';
+
 Export diff log format
  - short insert on one line
  - long insert statement on one line
