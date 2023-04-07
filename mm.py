@@ -85,8 +85,8 @@ class mm(object):
     # supply them everytime at the prompt
     # CREATE USER 'vagrant'@localhost IDENTIFIED BY 'vagrant';
     # GRANT ALL PRIVILEGES ON *.* TO 'vagrant'@localhost IDENTIFIED BY 'vagrant';
-    default_db_username = 'vagrant'
-    default_db_password = 'vagrant'
+    default_db_username = 'localdev'
+    default_db_password = 'localdev'
 
     # HTML tpl for the template path
     tpl_path_container = "<span style=\"background-color:#1177d1!important; color:#FFF!important;align-self:flex-start;padding:10px;z-index:9999;\">{}</span>\n"
